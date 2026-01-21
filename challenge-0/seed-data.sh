@@ -76,7 +76,8 @@ def setup_cosmos_db():
         'Technicians': {'partition_key': '/department'},
         'WorkOrders': {'partition_key': '/status'},
         'MaintenanceHistory': {'partition_key': '/machineId'},
-        'MaintenanceWindows': {'partition_key': '/isAvailable'}
+        'MaintenanceWindows': {'partition_key': '/isAvailable'},
+        'Suppliers': {'partition_key': '/category'}
     }
     
     container_clients = {}
@@ -108,7 +109,8 @@ def seed_cosmos_data(container_clients):
         'Technicians': 'data/technicians.json',
         'WorkOrders': 'data/work-orders.json',
         'MaintenanceHistory': 'data/maintenance-history.json',
-        'MaintenanceWindows': 'data/maintenance-windows.json'
+        'MaintenanceWindows': 'data/maintenance-windows.json',
+        'Suppliers': 'data/suppliers.json'
     }
     
     for container_name, file_path in data_mappings.items():

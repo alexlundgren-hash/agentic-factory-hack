@@ -31,15 +31,32 @@
     "id": "wo-2024-456",
     "workOrderNumber": "WO-2024-456",
     "machineId": "machine-004",
+    "faultType": "load_cell_drift",
     "title": "Corrective Maintenance - Load Cell Calibration",
     "description": "Load cell drift detected during master tire check - recalibration required",
     "type": "corrective",
     "priority": "high",
     "status": "in_progress",
+    "assignedTechnician": "tech-003",
     "assignedTo": "tech-003",
     "createdDate": "2024-11-20T09:15:00Z",
+    "createdAt": "2024-11-20T09:15:00Z",
     "scheduledDate": "2024-11-20T14:00:00Z",
     "estimatedDuration": 180,
+    "requiredParts": [
+      {
+        "partNumber": "TUM-LC-2KN",
+        "partName": "Load Cell 2kN",
+        "quantity": 1,
+        "isAvailable": false
+      },
+      {
+        "partNumber": "TUM-ENC-5000",
+        "partName": "Rotary Encoder 5000ppr",
+        "quantity": 1,
+        "isAvailable": false
+      }
+    ],
     "partsUsed": [],
     "notes": "Running full calibration sequence with master tire. Environmental temperature stable. All mechanical bindings checked and cleared.",
     "cost": 0.00
@@ -77,15 +94,32 @@
     "id": "wo-2024-468",
     "workOrderNumber": "WO-2024-468",
     "machineId": "machine-005",
+    "faultType": "rotor_wear",
     "title": "Preventive Maintenance - Rotor Tip Replacement",
     "description": "Scheduled rotor tip inspection and replacement for Banbury Mixer E1",
     "type": "preventive",
     "priority": "medium",
     "status": "scheduled",
+    "assignedTechnician": "tech-005",
     "assignedTo": "tech-005",
     "createdDate": "2024-11-25T10:00:00Z",
+    "createdAt": "2024-11-25T10:00:00Z",
     "scheduledDate": "2024-12-05T06:00:00Z",
     "estimatedDuration": 360,
+    "requiredParts": [
+      {
+        "partNumber": "BMX-TIP-500",
+        "partName": "Mixer Rotor Tip",
+        "quantity": 4,
+        "isAvailable": true
+      },
+      {
+        "partNumber": "BMX-SEAL-DP",
+        "partName": "Drop Door Seal",
+        "quantity": 1,
+        "isAvailable": true
+      }
+    ],
     "partsUsed": [
       {
         "partId": "part-mixer-rotor-tip",

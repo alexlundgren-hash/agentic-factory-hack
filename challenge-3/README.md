@@ -4,7 +4,7 @@ Welcome to Challenge 3!
 
 In this challenge, you'll work with two specialized AI agents that optimize factory operations through intelligent maintenance scheduling and automated supply chain management.
 
-**Expected Duration:** 60 minutes
+**Expected Duration:** 30 minutes
 
 **Prerequisites**: [Challenge 0](../challenge-0/challenge-0.md) successfully completed
 
@@ -12,9 +12,9 @@ In this challenge, you'll work with two specialized AI agents that optimize fact
 
 The goals for this challenge are:
 
-- Create two Foundry agents using Python
-- Use Agent memory
-- Examine Agent observability
+- Create two **Foundry** agents using Python
+- Use agent memory
+- Examine agent observability
 
 
 ## 🧭 Context and background information
@@ -25,23 +25,25 @@ The **Maintenance Scheduler Agent** analyzes work orders and historical maintena
 The **Parts Ordering Agent** checks inventory levels for required parts, evaluates supplier performance and lead times, and generates optimized parts orders with cost analysis.
 
 You will use the Azure resources highlighted in the image below.
-![Challenge 3 Azure Resources](./images/challenge-3-azure-resources.png)
 
-Both agents interact with Azure Cosmos DB as their primary data store.
+<img src="./images/challenge-3-azure-resources.png" alt="Azure Resources" width="60%">
+
+
+Both agents interact with **Cosmos DB** as their primary data store.
 
 <details>
 <summary>Containers Used</summary>
 
 | Container | Purpose | Agent Usage |
 |-----------|---------|-------------|
-| **WorkOrders** | Work orders from Repair Planner | Read by both agents to get job details |
-| **Machines** | Equipment information | Referenced for machine context |
-| **MaintenanceHistory** | Historical maintenance records | Read by Maintenance Scheduler for pattern analysis |
-| **MaintenanceWindows** | Available production windows | Read by Maintenance Scheduler to find optimal timing |
-| **MaintenanceSchedules** | Generated maintenance schedules | **Written by Maintenance Scheduler** |
-| **PartsInventory** | Current stock levels | Read by Parts Ordering to check availability |
-| **Suppliers** | Supplier information | Read by Parts Ordering for sourcing decisions |
-| **PartsOrders** | Generated parts orders | **Written by Parts Ordering Agent** |
+| `WorkOrders` | Work orders from Repair Planner | Read by both agents to get job details |
+| `Machines` | Equipment information | Referenced for machine context |
+| `MaintenanceHistory` | Historical maintenance records | Read by **Maintenance Scheduler Agent** for pattern analysis |
+| `MaintenanceWindows` | Available production windows | Read by **Maintenance Scheduler Agent** to find optimal timing |
+| `MaintenanceSchedules` | Generated maintenance schedules | Written by **Maintenance Scheduler Agent** |
+| `PartsInventory` | Current stock levels | Read by **Parts Ordering Agent** to check availability |
+| `Suppliers` | Supplier information | Read by **Parts Ordering Agent** for sourcing decisions |
+| `PartsOrders` | Generated parts orders | Written by **Parts Ordering Agent** |
 
 </details>
 
@@ -81,31 +83,68 @@ Input (READ):                         Output (WRITE):
 
 ---
 
+### Agent Memory
+
+Both agents implement **persistent memory** by storing conversation history in **Cosmos DB**. This enables agents to maintain context across multiple interactions with the same entity (machine or work order).
+
+**Why use agent memory?**
+- **Contextual awareness**: Agents can reference previous interactions when making decisions, leading to more informed recommendations
+- **Consistency**: Maintains a coherent conversation thread even when sessions are interrupted or resumed later
+- **Learning from history**: The AI can consider past recommendations and outcomes when generating new responses
+
+The conversation history is injected into the AI prompt as context, so the model can see what was previously discussed and provide more relevant responses.
+
+---
+
 ### Azure AI Tracing & Observability
 
 Both agents are instrumented for **end-to-end observability** so you can debug runs and understand model behavior without adding print statements everywhere.
 
-What you get in traces:
+**What's included:**
+- ✅ **Azure Monitor Integration** - Sends traces to **Application Insights**
+- ✅ **AI Inference Instrumentation** - Automatically traces all AI model calls
+- ✅ **OpenTelemetry Support** - Industry-standard distributed tracing
+- ✅ **Graceful Fallback** - Agents work even if tracing packages aren't installed
 
+**What you get in traces:**
 - **Agent execution timeline**: each step (read data, reason, write results)
 - **AI model calls**: prompts, responses, token usage, and latency (when enabled)
 - **Cosmos DB operations**: reads/writes to containers used by the agents
 - **Failures with context**: exceptions + which step failed
 
-Tracing is designed to be **automatic when configured**: if the tracing dependencies are present and an Application Insights connection string is available, the agents will emit rich traces covering both the workflow steps and model calls.
+**How it works:**
+
+Tracing is automatically enabled when you run the agents if:
+1. Tracing packages are installed (already included in `requirements.txt`)
+2. `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable is set (configured in `.env`)
+
+The agents use **Azure Monitor** exporters to send traces, metrics, and logs directly to **Application Insights**, which integrates with **Azure AI Foundry** portal.
+
+<details>
+<summary>Tracing dependencies (already installed)</summary>
+
+The following packages are included in `requirements.txt`:
+- `azure-ai-inference[tracing]` - AI tracing instrumentation
+- `azure-monitor-opentelemetry` - **Azure Monitor** exporter
+- `opentelemetry-api` and `opentelemetry-sdk` - OpenTelemetry framework
+- `opentelemetry-exporter-otlp-proto-grpc` - gRPC exporter for OpenTelemetry
+
+</details>
 
 ## ✅ Tasks
 
 ### Task 1: Maintenance Scheduler Agent
 
-The Maintenance Scheduler Agent analyzes work orders and determines the optimal time to perform maintenance by balancing equipment reliability needs against production impact.
+The **Maintenance Scheduler Agent** analyzes work orders and determines the optimal time to perform maintenance by balancing equipment reliability needs against production impact.
+
+**Agent memory in action:** This agent stores chat history per machine using `get_machine_chat_history` and `save_machine_chat_history`. When the agent runs for the same machine multiple times, it can recall previous maintenance discussions and recommendations, allowing it to build on prior analysis rather than starting fresh each time.
 
 What it does
 
 1. **Reads Work Order** from `WorkOrders` container
 2. **Analyzes Historical Data** from `MaintenanceHistory` container to understand failure patterns
 3. **Checks Available Windows** from `MaintenanceWindows` container to find low-impact periods
-4. **Runs AI Analysis** using Microsoft Agent Framework to assess risk and recommend timing
+4. **Runs AI Analysis** using **Microsoft Agent Framework** to assess risk and recommend timing
 5. **Saves Schedule** to `MaintenanceSchedules` container with risk scores and recommendations
 6. **Updates Work Order** status to 'Scheduled'
 
@@ -119,8 +158,6 @@ cd challenge-3
 
 python agents/maintenance_scheduler_agent.py wo-2024-456
 ```
-
----
 
 <details>
 <summary>You should see an output similar to this:</summary>
@@ -171,7 +208,7 @@ Reasoning:
 The work order is marked as high priority, indicating either a critical fault or a high risk of operational impact. The time since last maintenance is a little over a month, which is relatively short compared to typical MTBF (Mean Time Between Failures), but historical maintenance events on this machine (spindle bearing failure and load cell calibration drift) have resulted in substantial downtime and cost. While there are no previous occurrences of the specific fault type, the combination of high priority, recent significant failures, and the overall criticality of the equipment elevates risk. The selected window (first available, low production impact) ensures downtime cost is minimized while addressing the issue with urgency, but not immediate action, as the probability of catastrophic failure is moderate. Scheduling at the first available low-impact window balances risk mitigation with operational efficiency.
 
 5. Saving maintenance schedule...
-   ✓ Schedule saved to Cosmos DB
+   ✓ Schedule saved to **Cosmos DB**
 
 6. Updating work order status...
    ✓ Work order status updated to 'Scheduled'
@@ -180,49 +217,13 @@ The work order is marked as high priority, indicating either a critical fault or
 ```
 </details>
 
-<details>
-<summary>Example documents written/updated (Cosmos DB)</summary>
-
-**MaintenanceSchedules Container:**
-
-```json
-{
-   "id": "sched-1735845678",
-   "workOrderId": "WO-001",
-   "machineId": "machine-001",
-   "scheduledDate": "2026-01-04T22:00:00Z",
-   "maintenanceWindow": {
-      "id": "mw-2026-01-04-night",
-      "startTime": "2026-01-04T22:00:00Z",
-      "endTime": "2026-01-05T06:00:00Z",
-      "productionImpact": "Low"
-   },
-   "riskScore": 85.0,
-   "predictedFailureProbability": 0.70,
-   "recommendedAction": "URGENT",
-   "reasoning": "Given the high priority work order and historical pattern...",
-   "createdAt": "2026-01-02T15:30:00Z"
-}
-```
-
-**WorkOrders Container (Updated):**
-
-```json
-{
-   "id": "WO-001",
-   "machineId": "machine-001",
-   "status": "Scheduled",  // ← Updated from "Created"
-   ...
-}
-```
-
-</details>
-
 ---
 
 ### Task 2: Run Parts Ordering Agent
 
-The Parts Ordering Agent checks inventory availability and generates optimized parts orders by evaluating supplier reliability, lead times, and costs.
+The **Parts Ordering Agent** checks inventory availability and generates optimized parts orders by evaluating supplier reliability, lead times, and costs.
+
+**Agent memory in action:** This agent stores chat history per work order using `get_work_order_chat_history` and `save_work_order_chat_history`. This allows the agent to maintain ordering context for each job - if a work order is processed multiple times (e.g., due to partial fulfillment or changes), the agent remembers previous ordering decisions and can provide consistent recommendations.
 
 What it does
 
@@ -244,68 +245,98 @@ python agents/parts_ordering_agent.py wo-2024-456
 <summary>Example output (parts need ordering)</summary>
 
 ```text
-=== Parts Ordering Agent ===
+ Agent Framework tracing enabled (Azure Monitor)
+   Traces sent to: InstrumentationKey=05a5a2ca-aa92-4118-ba1a-c7086eca58c9
+   View in Azure AI Foundry portal: https://ai.azure.com -> Your Project -> Tracing
+
+   Checking existing agent versions in portal...
+   Found 0 existing versions
+   Creating new version (will be version #1)...
+   Registering PartsOrderingAgent in Azure AI Foundry portal...
+   ✅ New version created!
+      Agent ID: PartsOrderingAgent:1
+   Verifying creation...
+   Total versions now in portal: 1
+   Check portal at: https://ai.azure.com
 
 1. Retrieving work order...
-   ✓ Work Order: WO-002
-   Machine: machine-002
+   ✓ Work Order: wo-2024-456
+   Machine: machine-004
    Required Parts: 2
-   Priority: medium
+   Priority: high
 
 2. Checking inventory status...
    ✓ Found 2 inventory records
 
 ⚠️  2 part(s) need to be ordered:
-   - Drum Bearing (Qty: 1)
-   - Tension Sensor Module (Qty: 1)
+   - Load Cell 2kN (Qty: 1)
+   - Rotary Encoder 5000ppr (Qty: 1)
 
 3. Finding suppliers...
-   ✓ Found 3 potential suppliers
+   ✓ Found 2 potential suppliers
 
 4. Running AI parts ordering analysis...
+   Using persistent chat history for work order: wo-2024-456
    ✓ Parts order generated!
 
 === Parts Order ===
-Order ID: po-1735845789
-Work Order: WO-002
+Order ID: PO-58689c01
+Work Order: wo-2024-456
 Supplier: Industrial Parts Co (ID: SUP-001)
-Expected Delivery: 2026-01-07
-Total Cost: $1340.00
+Expected Delivery: 2024-06-17
+Total Cost: $505.00
 Status: Pending
 
 Order Items:
-  - Drum Bearing (#PART-006)
-    Qty: 1 @ $890.00 = $890.00
-  - Tension Sensor Module (#PART-005)
-    Qty: 1 @ $450.00 = $450.00
+  - Load Cell 2kN (#TUM-LC-2KN)
+    Qty: 1 @ $320.00 = $320.00
+  - Rotary Encoder 5000ppr (#TUM-ENC-5000)
+    Qty: 1 @ $185.00 = $185.00
 
 5. Saving parts order...
    ✓ Order saved to SCM system
 
 6. Updating work order status...
    ✓ Work order status updated to 'PartsOrdered'
-
-✓ Parts Ordering Agent completed successfully!
 ```
 
 </details>
 
-When All Parts Available:
+<br/>
+Test with another work order
+
+```bash
+python agents/parts_ordering_agent.py wo-2024-468
+```
 
 <details>
-<summary>Example output (all parts available)</summary>
+<summary>Example output (parts are available)</summary>
 
 ```text
 === Parts Ordering Agent ===
 
+📊 Agent Framework tracing enabled (Azure Monitor)
+   Traces sent to: InstrumentationKey=05a5a2ca-aa92-4118-ba1a-c7086eca58c9
+   View in Azure AI Foundry portal: https://ai.azure.com -> Your Project -> Tracing
+
+   Checking existing agent versions in portal...
+   Found 1 existing versions
+   Creating new version (will be version #2)...
+   Registering PartsOrderingAgent in Azure AI Foundry portal...
+   ✅ New version created!
+      Agent ID: PartsOrderingAgent:2
+   Verifying creation...
+   Total versions now in portal: 2
+   Check portal at: https://ai.azure.com
+
 1. Retrieving work order...
-   ✓ Work Order: WO-001
-   Machine: machine-001
-   Required Parts: 1
-   Priority: high
+   ✓ Work Order: wo-2024-468
+   Machine: machine-005
+   Required Parts: 2
+   Priority: medium
 
 2. Checking inventory status...
-   ✓ Found 1 inventory records
+   ✓ Found 2 inventory records
 
 ✓ All required parts are available in stock!
 No parts order needed.
@@ -318,69 +349,21 @@ No parts order needed.
 
 </details>
 
-What Gets Saved to Cosmos DB:
-
-<details>
-<summary>Example documents written/updated (Cosmos DB)</summary>
-
-**PartsOrders Container:**
-
-```json
-{
-   "id": "po-1735845789",
-   "workOrderId": "WO-002",
-   "supplierId": "SUP-001",
-   "supplierName": "Industrial Parts Co",
-   "orderItems": [
-      {
-         "partNumber": "PART-006",
-         "partName": "Drum Bearing",
-         "quantity": 1,
-         "unitCost": 890.00,
-         "totalCost": 890.00
-      },
-      {
-         "partNumber": "PART-005",
-         "partName": "Tension Sensor Module",
-         "quantity": 1,
-         "unitCost": 450.00,
-         "totalCost": 450.00
-      }
-   ],
-   "totalCost": 1340.00,
-   "expectedDeliveryDate": "2026-01-07T00:00:00Z",
-   "orderStatus": "Pending",
-   "reasoning": "Selected Industrial Parts Co based on high reliability rating...",
-   "createdAt": "2026-01-02T15:35:00Z"
-}
-```
-
-**WorkOrders Container (Updated):**
-
-```json
-{
-   "id": "WO-002",
-   "machineId": "machine-002",
-   "status": "PartsOrdered",  // ← Updated from "Created"
-   ...
-}
-```
-
-</details>
 
 ---
 
 ### Task 3: Azure AI Tracing & Observability
 
-This challenge uses Azure AI Foundry tracing so you can inspect runs in the portal.
+This challenge uses **Azure AI Foundry** tracing so you can inspect runs in the portal.
 
-> [!TIP]
-> See the AI Tracing and Observability background overview in the [Context and background](#azure-ai-tracing--observability) section
+**Why observability matters:** When running agents in production, you need visibility into what's happening. The batch script processes 5 work orders through both agents, generating 10 total agent runs. By examining the traces, you can:
+- **Identify bottlenecks**: See which steps take the longest (AI inference vs. database operations)
+- **Debug failures**: When an agent fails, traces show exactly which step failed and why
+- **Monitor costs**: Token usage metrics help you understand and optimize AI spending
+- **Validate behavior**: Confirm that agents are making reasonable decisions by reviewing their reasoning
 
 #### Task 3.1: Generate traces
-
-- Run either agent normally (Tasks 1 and 2).
-- To generate multiple traces quickly:
+Generate some trace data by running a batch script [run-batch.py](./run-batch.py) which will process 5 work orders through each agent.
 
 ```bash
 python run-batch.py
@@ -390,52 +373,108 @@ python run-batch.py
 
 1. Go to <https://ai.azure.com>
 2. Select your project
-3. Selcte _Agents_ and then `MaintenanceSchedulerAgent` or `PartsOrderingAgent` 
-4. Go to _Monitor_ tab
+3. Select *Agents* and then `MaintenanceSchedulerAgent` or `PartsOrderingAgent`
+4. Go to the *Monitor* tab
 
 You should see someting similar to this
-![Monitor](./images/challenge-3-monitor-portal.png)
+
+<img src="./images/challenge-3-monitor-portal.png" alt="Monitor portal" width="60%">
+
+
+You can examine metrics for *Token usage*, *Agent runs*, *Tool calls*, and potential *Errors*.
+
+
+
+#### Task 3.3: View traces in Application Insights
+
+The **Foundry Project** is connected to **Application Insights** where the monitoring data is stored.
+Select *Open in Azure Monitor* in the upper right corner.
+
+<img src="./images/challenge-3-open-in-monitor.png" alt="Open in monitor" width="30%">
+
+
+This will open **Application Insights** where you will see similar monitoring details as in the **Foundry** portal, but you can also drill further into traces for troubleshooting purposes.
+
+<img src="./images/challenge-3-application-insights.png" alt="Application Insights" width="80%">
+
+🎉 Congratulations! You've successfully worked with two agents that integrate with **Cosmos DB** and include production-ready observability.
+
+
+## 🚀 Go Further
+
+> [!NOTE]
+> Finished early? These tasks are **optional** extras for exploration. Feel free to move on to the next challenge — you can always come back later!
+
+### Customize the scheduling logic
+
+Modify the **Maintenance Scheduler Agent** prompt in `maintenance_scheduler_agent.py` to adjust how it calculates risk scores. Try:
+- Weighting recent failures more heavily than older ones
+- Adding urgency modifiers based on machine criticality
+- Incorporating seasonal production patterns (e.g., higher thresholds during peak periods)
+
+### Add supplier scoring
+
+Enhance the **Parts Ordering Agent** to track supplier performance over time:
+- Add a `reliability_score` field to supplier records
+- Update scores based on on-time delivery rates
+- Factor historical performance into supplier selection
+
+### Create custom Kusto queries
+
+Write custom queries in **Application Insights** to analyze agent behavior:
+- Calculate average response time per agent
+- Identify which work orders trigger the longest AI inference times
+- Track token usage trends over time
+- Alert on agents that exceed cost thresholds
+
+### Implement memory expiration
+
+The current agent memory stores all conversation history indefinitely. Add logic to:
+- Expire conversations older than 30 days
+- Summarize old conversations instead of keeping full history
+- Limit memory to the most recent N interactions per entity
+
+### Test failure scenarios
+
+Explore how the agents handle edge cases:
+- Work orders with no available maintenance windows
+- Parts that no supplier can provide
+- Machines with no maintenance history
+- Extremely high-priority orders that need immediate scheduling
 
 
 ## 🛠️ Troubleshooting and FAQ
 
 <details>
-<summary>Disable tracing (local)</summary>
+<summary>Problem: I don't see my traces in Azure AI Foundry portal</summary>
 
-```bash
-unset APPLICATIONINSIGHTS_CONNECTION_STRING
-```
+There can be a delay of **2-5 minutes** before metrics and traces appear in the **Azure AI Foundry** portal. This is normal behavior as data is batched and processed before being displayed.
+
+**What to do:**
+1. Wait a few minutes and refresh the portal
+2. Check **Application Insights** directly - traces often appear there faster
+   - Go to your **Application Insights** resource in the **Azure** portal
+   - Navigate to *Transaction search* or *Logs* to query traces immediately
+3. Verify your `APPLICATIONINSIGHTS_CONNECTION_STRING` is correctly set in `.env`
 
 </details>
 
 ## 🧠 Conclusion and reflection
 
-🎉 Congratulations! You've successfully worked with two agents that integrate with Cosmos DB and include production-ready observability.
-
 Let’s quickly recap what we did.
 
-In [Task 1](#task-1-maintenance-scheduler-agent) we created the **Maintenance Scheduler Agent** to analyze work orders, look at historical maintenance patterns, find low-impact maintenance windows, and then save a schedule back to Cosmos DB.
+In [Task 1](#task-1-maintenance-scheduler-agent) we created the **Maintenance Scheduler Agent** to analyze work orders, look at historical maintenance patterns, find low-impact maintenance windows, and then save a schedule back to **Cosmos DB**. The **Maintenance Scheduler Agent** stores chat history per machine (`get_machine_chat_history` / `save_machine_chat_history`), allowing it to recall previous maintenance discussions for that specific equipment. The agent is used for **predictive maintenance scheduling** - it calculates risk scores based on historical failure patterns, predicts failure probability, and recommends optimal maintenance windows (IMMEDIATE, URGENT, or SCHEDULED) to minimize production disruption while addressing equipment reliability needs.
 
-![Task 1](./images/challenge-3-task-1.png)
+<img src="./images/challenge-3-task-1.png" alt="Task 1" width="50%">
 
-In [Task 2](#task-2-run-parts-ordering-agent) we created the **Parts Ordering Agent** to check required parts, validate what’s already in inventory, select an optimized supplier plan, and write a parts order back to Cosmos DB.
+In [Task 2](#task-2-run-parts-ordering-agent) we created the **Parts Ordering Agent** to check required parts, validate what's already in inventory, select an optimized supplier plan, and write a parts order back to **Cosmos DB**. The **Parts Ordering Agent** stores chat history per work order (`get_work_order_chat_history` / `save_work_order_chat_history`), maintaining ordering context for each job. The agent is used for **automated parts procurement** - it evaluates suppliers based on reliability, lead time, and cost to generate optimized purchase orders with expected delivery dates and total cost calculations.
 
-![Task 2](./images/challenge-3-task-2.png)
+<img src="./images/challenge-3-task-2.png" alt="Task 2" width="50%">
 
-Finally, in [Task 3](#task-3-azure-ai-tracing--observability) we used **Azure AI Foundry tracing** to observe the end-to-end workflow, including data access and model calls.
+Finally, in [Task 3](#task-3-azure-ai-tracing--observability) we used **Azure AI Foundry tracing** to observe the end-to-end workflow, including data access and model calls. This is useful for **production monitoring and debugging** - identifying performance bottlenecks, tracking token usage and costs, debugging failures with full context, and validating that agents are making reasonable decisions by reviewing their reasoning in the traces.
 
-![Task 3](./images/challenge-3-task-3.png)
+<img src="./images/challenge-3-task-3.png" alt="Task 3" width="50%">
 
-You've learned how to:
-
-- **Read from Cosmos DB** - Query work orders, history, inventory, and supplier data
-- **Write to Cosmos DB** - Save generated schedules and parts orders
-- **Update existing records** - Change work order status based on agent actions
-- **Use Microsoft Agent Framework** - Modern agent architecture with `ChatAgent`
-- **Integrate with Azure AI Foundry** - Run agents with integrated tracing
-- **Build data-driven agents** - Combine database queries with AI analysis
-- **Handle multiple containers** - Work with complex data relationships
-- **Implement tracing & observability** - Monitor agent performance and model usage
 
 If you want to expand your knowledge on what we’ve covered in this challenge, have a look at the content below:
 

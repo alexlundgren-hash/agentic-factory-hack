@@ -490,7 +490,7 @@ class CosmosDbService:
 
             results: List[Supplier] = []
             for item in items:
-                supplier_parts = item.get("parts", [])
+                supplier_parts = item.get("partsSupplied", item.get("parts", []))
                 if any(part in supplier_parts for part in part_numbers):
                     results.append(
                         Supplier(
