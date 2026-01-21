@@ -405,8 +405,6 @@ You should see someting similar to this
 ![Monitor](./images/challenge-3-monitor-portal.png)
 
 
----
-
 ## 🛠️ Troubleshooting and FAQ
 
 <details>

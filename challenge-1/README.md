@@ -37,7 +37,7 @@ You will also use **Model Context Protocol (MCP)** to connect the agents with re
 
 MCP is a standard way for an agent to discover and invoke external capabilities ("tools") through a consistent interface. 
 
-![MCP](./images/challenge-1-mcp.png)
+<img src="./images/challenge-1-mcp.png" alt="MCP" width="60%">
 
 Let's break down the key components shown in the diagram:
 
@@ -100,7 +100,7 @@ Why we use it here:
 
 The diagram below illustrates how API Management serves as an AI Gateway, bridging traditional API patterns with the new requirements of agentic applications:
 
-![AI Gateway](./images/challenge-1-ai-gateway.png)
+<img src="./images/challenge-1-ai-gateway.png" alt="AI Gateway" width="60%">
 
 Let's break down what the diagram shows:
 
@@ -221,28 +221,26 @@ curl -fsSL "$APIM_GATEWAY_URL/maintenance/tire_curing_press" -H "Ocp-Apim-Subscr
 
 **API Management** provides an easy way to expose APIs as MCP servers without writing any additional wrapper code.
 
-❶ Navigate to your **API Management** instance in the [Azure portal](https://portal.azure.com).
-
-❷ Choose *APIs* and notice that *Machine API* and *Maintenance API* you tested earlier is available
+1. Navigate to your **API Management** instance in the [Azure portal](https://portal.azure.com).
+2. Choose *APIs* and notice that *Machine API* and *Maintenance API* you tested earlier is available
 
 <img src="./images/challenge-1-portal-apis.png" alt="Portal APIs" width="40%">
 
-❸ Navigate to the *MCP Servers* section
 
-❹ Click *Create MCP Server* and *Expose an API as MCP Server*
-
-❺ Select API, operations and provide the following details:
-- **API**: *Machine API*
-- **API Operations**: *Get Machine*
-- **Display Name**: *Get Machine Data*
-- **Name**: `get-machine-data`
-- **Description**: *Gets details about a specific machine*
+3. Navigate to the *MCP Servers* section
+4. Click *Create MCP Server* and *Expose an API as MCP Server*
+5. Select API, operations and provide the following details
+    - **API**: *Machine API*
+    - **API Operations**: *Get Machine*
+    - **Display Name**: *Get Machine Data*
+    - **Name**: `get-machine-data`
+    - **Description**: *Gets details about a specific machine*
 
 <img src="./images/challenge-1-portal-expose-mcp.png" alt="Expose MCP" width="50%">
 
-❻ Click *Create*
 
-❼ Finally, save the *MCP Server URL* of the newly created MCP server, you will need it in the next part. Add a new entry with the value in the `.env` file `MACHINE_MCP_SERVER_ENDPOINT="<MCP_SERVER_URL>"`
+6. Click *Create*
+7. Finally, save the *MCP Server URL* of the newly created MCP server, you will need it in the next part. Add a new entry with the value in the `.env` file `MACHINE_MCP_SERVER_ENDPOINT="<MCP_SERVER_URL>"`
 
 Perform the same steps to create the *Maintenance* MCP server using the following settings:
 
@@ -325,7 +323,7 @@ Out of 2 anomaly records reviewed for machine-001 (Tire Curing Press A1), one vi
 
 #### Task 2.5. Review and test the agent in Foundry Portal
 
-❶ Navigate to [**Microsoft Foundry Portal**](https://ai.azure.com).
+1. Navigate to [**Microsoft Foundry Portal**](https://ai.azure.com).
 
 > [!TIP]
 > Make sure you are using the new Foundry portal experience.  
@@ -334,26 +332,30 @@ Out of 2 anomaly records reviewed for machine-001 (Tire Curing Press A1), one vi
 > <img src="./images/challenge-1-new-foundry-portal.png" alt="New Foundry portal toggle" width="20%">
 >
 
-❷ Select the *Build* tab to list available agents
+1. Select the *Build* tab to list available agents
 
 <img src="./images/challenge-1-foundry-portal-build-tab.png" alt="Foundry portal build tab" width="20%">
 
-❸ Examine the configuration details for `AnomalyClassificationAgent` you just created.
+2. Examine the configuration details for `AnomalyClassificationAgent` you just created.
+<br/>
 
 <img src="./images/challenge-1-foundry-portal-anomaly-classification-agent.png" alt="Foundry Portal Anomaly Classification Agent" width="40%">
+
+
+<br/>
 
 > [!NOTE]
 > There are two vesions of **Anomaly Classifcation Agent** created, one for the inital agent with local tools and one for the version that uses MCP tools
 
-❹ Select the **Anomaly Classification Agent** and try out some additional questions in the playground:
+
+
+3. Select the **Anomaly Classification Agent** and try out some additional questions in the playground:
 
 - Normal condition (no maintenance needed). Use query `Hello, can you classify the following metric for machine-002: [{"metric": "drum_vibration", "value": 2.1}]`
 
 <img src="./images/challenge-1-foundry-portal-playground.png" alt="Foundry Portal Playground" width="40%">
 
 - Critical anomaly. Use query `Hello, can you classify the following metric for machine-005: [{"metric": "mixing_temperature", "value": 175}]`
-- Non existing machine. Use query `Hello, can you classify the following anomalies for machine-007: [{"metric": "curing_temperature", "value": 179.2},{"metric": "cycle_time", "value": 14.5}]`
-- Non-existent machine. Use query `Hello, can you classify the following anomalies for machine-007: [{"metric": "curing_temperature", "value": 179.2},{"metric": "cycle_time", "value": 14.5}]`
 
 ---
 
@@ -365,11 +367,9 @@ The next agent we'll create, **Fault Diagnosis Agent**, is tasked to understand 
 
 The machine wiki contains knowledge (common issues, repair instructions and repair details) about different machine types. The wiki pages are available as markdown files in **Azure Blob Storage**. Take a moment to review the content:
 
-❶ Navigate to [**Azure portal**](https://portal.azure.com) and locate the storage account.
-
-❷ Select *Storage browser* / *Blob containers* and select the `machine-wiki` container
-
-❸ Select a wiki article and select the *Edit* tab to preview the content
+1. Navigate to [**Azure portal**](https://portal.azure.com) and locate the storage account.
+2. Select *Storage browser* / *Blob containers* and select the `machine-wiki` container  
+3. Select a wiki article and select the *Edit* tab to preview the content
 
 <img src="./images/challenge-1-wiki-storage-page.png" alt="Storage wiki page" width="40%">
 
@@ -466,6 +466,30 @@ Verify the answer from the agent.
 
 🎉 Congratulations! You've successfully built two agents and equipped them with enterprise tools to perform their tasks.
 
+## 🚀 Go Further
+
+> [!NOTE]
+> Finished early? These tasks are **optional** extras for exploration. Feel free to move on to the next challenge — you can always come back later!
+
+### Experiment with prompts
+
+Try modifying the system instructions in [anomaly_classification_agent_mcp.py](./agents/anomaly_classification_agent_mcp.py) or [fault_diagnosis_agent.py](./agents/fault_diagnosis_agent.py). Observe how different phrasings affect the agent's responses — this is practical prompt engineering in action.
+
+### Test edge cases in the playground
+
+Use the **Foundry Portal** playground to test boundary conditions:
+- Non-existent machines (e.g., `machine-999`)
+- Metrics at exact threshold values
+- Invalid or malformed input data
+- Multiple anomalies at once
+
+### Add a new wiki article
+
+1. Create a new markdown file for a machine type (e.g., copy and modify an existing article)
+2. Upload it to the `machine-wiki` container in **Azure Blob Storage**
+3. Re-run the indexer to include the new content
+4. Test retrieval with the **Fault Diagnosis Agent**
+
 ## 🛠️ Troubleshooting and FAQ
 
 <details>
@@ -489,10 +513,7 @@ In [Task 1](#task-1-create-and-test-initial-anomaly-classification-agent) we cre
 
 The agent had a system prompt with instructions how to behave and had two *local* tools to be able to query **Cosmos DB** data. When running the Python script the tools executed locally in the Python process. If you were to ask the same questions in the **Foundry Portal** playground the agent wouldn't be able to answer since the tools are not available there.
 
-> [!NOTE]
-> **When do you need an agent?** This particular example could be solved *without* an agent — it's mainly mapping metrics to thresholds. The only thing we're using AI for here is generating a human-readable summary of the issue. However, using an agent (besides being a learning exercise) means we can add more tools in the future for more advanced reasoning. We also get built-in observability and memory (conversation history), which we'll examine in Challenge 3.
->
-> You don't always need a full agent. You can use the **Azure AI Inference SDK** to call a model directly without going through an agent when your use case is simpler.
+
 
 In [Task 2](#task-2-equip-the-agent-with-mcp-tools), we published the APIs as MCP servers in **API Management** and connected them to the Foundry project.
 

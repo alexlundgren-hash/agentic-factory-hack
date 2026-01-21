@@ -17,6 +17,7 @@ The goals for this challenge are:
 ## 🧭 Context and Background
 
 ![Challenge 2 Scenario](./images/challenge-2-scenario.png)
+
 The **Repair Planner Agent** is the third component in our multi-agent system. After a fault has been diagnosed, this agent:
 
 - Determines what repair tasks need to be performed
@@ -26,7 +27,7 @@ The **Repair Planner Agent** is the third component in our multi-agent system. A
 
 You will implement the **Repair Planner Agent** as a .NET application that reads information about `Technicians` and `PartsInventory` from **Cosmos DB**. The final Work Order is also saved in **Cosmos DB**. The following diagram illustrates the target solution.
 
-![Challenge 2 Target Solution](./images/challenge-2-target-solution.png)
+<img src="./images/challenge-2-target-solution.png" alt="Challenge 2 Target Solution" width="60%">
 
 ❶ The **Repair Planner** is a .NET console application with `Program.cs` as its entry point.
 
@@ -362,10 +363,13 @@ dotnet run
 
 ```
 </details>
+<br/>
+🎉 Congratulations! You've built a **Repair Planner Agent** in .NET using **GitHub Copilot**.
 
----
+## 🚀 Go Further
 
-### Task 4 (optional): Enhancements
+> [!NOTE]
+> Finished early? These tasks are **optional** extras for exploration. Feel free to move on to the next challenge — you can always come back later!
 
 Once the basic agent works, try adding:
 
@@ -381,12 +385,6 @@ Add better error handling for when no technicians are available
 Add structured output using `AIJsonUtilities.CreateJsonSchema` 
 and `ChatResponseFormat.ForJsonSchema` for type-safe responses
 ```
-
-
-🎉 Congratulations! You've built a **Repair Planner Agent** in .NET using **GitHub Copilot**.
-
----
-
 
 ## 🛠️ Troubleshooting and FAQ
 
@@ -447,8 +445,6 @@ After saving the file, the `example-solution` folder will appear in the Explorer
 
 </details>
 
----
-
 ## 🧠 Conclusion and reflection
 
 
@@ -465,7 +461,9 @@ This repo uses **VS Code** Copilot customization so the agent behaves consistent
 > [!TIP]
 > Using guided agents (clear instructions + constrained tools + repeatable steps) helps avoid “vibe coding”, where solutions can drift, skip requirements, or become hard to review. A lightweight, guided approach keeps changes aligned with the goal and makes agent output easier to validate.
 
-![GitHub Copilot instructions](./images/challenge-2-copilot-instructions.png)
+
+<img src="./images/challenge-2-copilot-instructions.png" alt="GitHub Copilot instructions" width="50%">
+
 
 The diagram above illustrates how **GitHub Copilot** combines multiple inputs to generate contextual responses:
 

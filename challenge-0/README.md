@@ -17,8 +17,8 @@ If something isn’t working as expected, please let your coach know.
 
 The goals for this challenge are:
 
-1. Provision the Azure resources needed for the upcoming challenges.
-2. Seed sample data for the tire factory predictive maintenance multi-agent system.
+- Provision the Azure resources needed for the upcoming challenges.
+- Seed sample data for the tire factory predictive maintenance multi-agent system.
 
 ## 🧭 Context and background information
 
@@ -300,14 +300,22 @@ As mentioned in [Context and background information](#-context-and-background-in
 ./seed-data.sh
 ```
 
----
+<br/>
+🎉 Congratulations! Your sample tire factory environment is ready.
 
-### Task 9 (optional): Run Sample Queries
+## 🚀 Go Further
 
-If you want to verify or explore the seeded data, here are some sample queries you can run against the Cosmos DB.
-This can be done via the Azure Portal Data Explorer. As shown below:
+> [!NOTE]
+> Finished early? These tasks are **optional** extras for exploration. Feel free to move on to the next challenge — you can always come back later!
+
+### Run Sample Queries
+
+If you want to verify or explore the seeded data, here are some sample queries you can run against the **Cosmos DB**.
+This can be done via the Azure Portal *Data Explorer*. As shown below:
+
 
 ![Azure Portal Data Explorer](../images/dataexplorer-sample-query.png)
+
 <details>
 <summary>Find machines with warnings in the <code>Telemetry</code> container</summary>
 
@@ -329,7 +337,7 @@ WHERE c.machineType = "tire_curing_press"
 </details>
 
 <details>
-<summary>Find available technicians with _curing press skills_ in the <code>Technicians</code> container</summary>
+<summary>Find available technicians with curing press skills in the <code>Technicians</code> container</summary>
 
 ```sql
 SELECT c.name, c.skills, c.availability
@@ -339,8 +347,6 @@ WHERE ARRAY_CONTAINS(c.skills, "tire_curing_press")
 ```
 
 </details>
-
----
 
 ## 🛠️ Troubleshooting and FAQ
 
@@ -395,8 +401,6 @@ chmod +x challenge-0/seed-data.sh
 
 
 ## 🧠 Conclusion and reflection
-
-🎉 Congratulations! Your sample tire factory environment is ready.
 
 This forms the foundation for your multi-agent predictive maintenance hackathon system.
 
