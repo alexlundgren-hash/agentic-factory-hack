@@ -373,6 +373,36 @@ dotnet run
 > Finished early? These tasks are **optional** extras for exploration. Feel free to move on to the next challenge — you can always come back later!
 
 <details>
+<summary>Expose Cosmos DB queries as agent tools</summary>
+
+In the current implementation, the agent orchestrates calls to **Cosmos DB** directly through the `CosmosDbService` class. An alternative approach is to expose the database queries as **tools** that the agent can invoke, letting the LLM decide when and how to use them.
+
+**Why consider this?**
+
+| Direct code orchestration | Tool-based approach |
+|---------------------------|---------------------|
+| You control the exact sequence of calls | Agent decides which tools to call and when |
+| Predictable but rigid | More flexible—agent can adapt to different inputs |
+| Good for well-defined workflows | Good when reasoning is needed to choose actions |
+
+**How to implement:**
+
+1. Define local function tools (similar to `get_thresholds` and `get_machine_data` in Challenge 1) that wrap your **Cosmos DB** queries:
+   - `get_technicians_by_skills` — Returns available technicians matching required skills
+   - `get_parts_inventory` — Returns parts by part numbers
+   - `create_work_order` — Saves a new work order
+
+2. Register these functions as tools when creating the agent
+
+3. Update the agent's system prompt to explain when to use each tool
+
+4. Let the agent decide which tools to call based on the diagnosed fault
+
+**Taking it further:** Once you have local tools working, you could expose them as an **MCP server** (via **API Management** or a standalone server). This would allow the same tools to be shared across multiple agents and managed independently from the agent code—similar to how we exposed the Machine API in Challenge 1.
+
+</details>
+
+<details>
 <summary>Enhance the Repair Planner Agent</summary>
 
 Once the basic agent works, try adding:

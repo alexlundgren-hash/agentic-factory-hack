@@ -12,9 +12,8 @@ In this challenge, you'll work with two specialized AI agents that optimize fact
 
 The goals for this challenge are:
 
-- Create two **Foundry** agents using Python
-- Use agent memory
-- Examine agent observability
+- Use **agent memory** to maintain context across multiple interactions
+- Implement **observability** with Azure AI tracing to monitor and debug agent behavior
 
 
 ## 🧭 Context and Background
@@ -488,6 +487,21 @@ In [Task 2](#task-2-run-parts-ordering-agent) we created the **Parts Ordering Ag
 Finally, in [Task 3](#task-3-azure-ai-tracing--observability) we used **Azure AI Foundry tracing** to observe the end-to-end workflow, including data access and model calls. This is useful for **production monitoring and debugging** - identifying performance bottlenecks, tracking token usage and costs, debugging failures with full context, and validating that agents are making reasonable decisions by reviewing their reasoning in the traces.
 
 <img src="./images/challenge-3-task-3.png" alt="Task 3" width="50%">
+
+### Design consideration: Agent tools vs. application logic
+
+You may have noticed that in these agents, we prepare data using traditional application code (querying **Cosmos DB** directly) rather than exposing those queries as MCP tools for the agent to call. This is a deliberate design choice worth reflecting on.
+
+| Approach | When to use |
+|----------|-------------|
+| **Application logic prepares data** | When the data retrieval steps are predictable and don't require reasoning. The agent focuses on analysis and decision-making. |
+| **Agent calls tools** | When the agent needs flexibility to decide *what* data to fetch based on the situation, or when the same tools are shared across multiple agents. |
+
+In this challenge, we know exactly what data each agent needs: the **Maintenance Scheduler Agent** always needs the work order, maintenance history, and available windows. There's no reasoning required to decide *which* data to fetch—only *what to do* with it. By handling data retrieval in code, we make the agent's job simpler and its behavior more predictable.
+
+However, this comes with tradeoffs. If we wanted the agent to adaptively fetch additional context (e.g., "check similar machines if this one has no history"), tool-based access would give it that flexibility.
+
+**Looking ahead:** In [Challenge 4](../challenge-4/README.md), you'll see how **workflows** provide an even more structured approach—explicitly defining the sequence of agent invocations and data handoffs. This gives you tighter control over the business process while still leveraging AI for reasoning within each step.
 
 ---
 

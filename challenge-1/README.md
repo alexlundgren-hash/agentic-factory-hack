@@ -540,7 +540,12 @@ Finally, in [Task 3](#task-3-understand-root-cause-with-fault-diagnosis-agent-an
 ![Task 3](./images/challenge-1-task-3.png)
 
 This agent also runs fully in **Agent Service** and can use the tools when answering questions in the playground. Note that the content from **Blob Storage** isn't fetched on demand — instead, it's indexed ahead of time, and retrieval queries are executed against **AI Search**.
-
+> [!NOTE]
+> Throughout this challenge, all Python scripts both **register** the agent and **invoke** it in the same execution. This is convenient for learning and rapid iteration, but in a real-world scenario you would typically separate these concerns:
+> - **Agent registration** would happen once during application startup, or as part of a deployment pipeline.
+> - **Agent invocation** would happen at runtime when processing requests.
+>
+> This separation allows you to version and manage agent definitions independently from the client code that calls them.
 ---
 
 If you want to expand your knowledge on what we’ve covered in this challenge, have a look at the content below:

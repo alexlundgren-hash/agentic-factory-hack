@@ -6,7 +6,7 @@ Welcome to the Intelligent Predictive Maintenance Hackathon. In this workshop yo
 
 In this hackathon you’ll explore how agent workflows can support predictive maintenance: faster triage, more consistent diagnosis, and smoother handoffs from detection to repair planning.
 
-Using the **Microsoft Agent Framework**, **Microsoft Foundry** and **Azure**, you’ll build a small multi-agent workflow that mirrors a real maintenance process: monitoring telemetry, identifying anomalies, performing fault diagnosis, planning repairs, and proposing a schedule. The goal is a clear, observable workflow that can be reasoned about, tested, and iterated on.
+Using a code-first approach with **Microsoft Agent Framework**, **Microsoft Foundry**, and **Azure**, you'll build a small multi-agent workflow that mirrors a real maintenance process: monitoring telemetry, identifying anomalies, performing fault diagnosis, planning repairs, and proposing a schedule. The goal is a clear, observable workflow that can be reasoned about, tested, and iterated on.
 
 ## Learning Objectives
 
@@ -131,6 +131,9 @@ The following challenges are included in this hackathon:
 - **Challenge 2**: **[Repair Planner Agent and AI-Driven Development](challenge-2/README.md)** — Learn agent-driven development with **GitHub Copilot** by using the `agentplanning` agent to guide you through building a **Repair Planner Agent** in .NET.
 - **Challenge 3**: **[Maintenance Scheduler & Parts Ordering Agents with Memory and Observability](challenge-3/README.md)** — Build **Maintenance Scheduler** and **Parts Ordering** agents using **Microsoft Foundry's** persistent memory layer to maintain context across sessions, and explore agent traceability for observability.
 - **Challenge 4**: **[Multi-Agent Orchestration](challenge-4/README.md)** — Create the workflow of these 5 agents using **Microsoft Agent Framework** and run it in **Aspire**.
+
+> [!TIP]
+> While it's possible to rush through the challenges, we encourage you to pause and reflect along the way. Consider how each pattern relates to your own context: What business processes in your environment could benefit from coordinated AI agents? How might agents help orchestrate decisions across teams and systems? Taking time to think about real-world applicability will help you get the most out of this hackathon.
 
 ## Contributing
 
