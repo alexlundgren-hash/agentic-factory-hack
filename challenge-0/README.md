@@ -180,7 +180,7 @@ Please select your forked repository from the dropdown and, if necessary, adjust
 
 ### Task 3: Log in to Azure
 
-Before anything else, let’s log in to the Azure CLI. Paste the command below and follow the prompts.
+Once your Codespace has started, log in to the Azure CLI by running the command below in the terminal and following the prompts.
 
 ```bash
 az login --use-device-code
