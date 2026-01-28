@@ -173,6 +173,9 @@ Please select your forked repository from the dropdown and, if necessary, adjust
 
 ⏱️ Initial creation of the Codespace takes approximately 10 minutes
 
+> [!TIP]
+> While you are waiting for the creation to complete, take some time to familiarize yourself with the [hackathon scenario](../README.md#scenario) and [architecture](../README.md#architecture).
+
 ---
 
 ### Task 3: Log in to Azure
@@ -220,11 +223,7 @@ az deployment group create \
   --parameters location=$LOCATION
 ```
 
-⏱️ Deployment takes approximately 5-10 minutes
-
- 
-> [!TIP]
-> While you are waiting for the deployment to complete, take some time to familiarize yourself with the [hackathon scenario](../README.md#scenario) and [architecture](../README.md#architecture).
+⏱️Deployment takes approximately 5-10 minutes.
 
 
 </details>
@@ -296,11 +295,6 @@ To perform certain tasks in the hackathon, you need the following permissions:
 <details>
 <summary>Assign permissions</summary>
 
-
-> [!NOTE]
-> Role assignments can take **5–10 minutes** to fully propagate. If you still see `PermissionDenied` errors after assigning roles, wait a few minutes, then run `az login --use-device-code` again and re-export your environment variables.
-
-
 ```bash
 # Get your Entra ID (AAD) user object ID
 ME_OBJECT_ID="$(az ad signed-in-user show --query id -o tsv)"
@@ -337,7 +331,10 @@ az role assignment create \
 az login --use-device-code
 ```
 
+Role assignments can take **5–10 minutes** to fully propagate. If you still see `PermissionDenied` errors after assigning roles, wait a few minutes, then run `az login --use-device-code` again and re-export your environment variables.
+
 </details>
+
 
 <br/>
 🎉 Congratulations! Your sample tire factory environment is ready.
